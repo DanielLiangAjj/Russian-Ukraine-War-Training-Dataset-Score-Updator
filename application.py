@@ -6,7 +6,7 @@ import logging
 logging.basicConfig(level=logging.DEBUG)
 
 application = Flask(__name__)
-application.config['SECRET_KEY'] = 'secret-key-goes-here'
+application.config['SECRET_KEY'] = 'secret-key\'
 
 def get_last_id_updated():
     connection = get_db_connection()
