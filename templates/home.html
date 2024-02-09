@@ -1,0 +1,134 @@
+<!-- home.html -->
+<style>
+.enlarged {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1000;
+    background-color: rgba(255, 255, 255, 0.95);  /* Slight transparency to show underlying content */
+    padding: 20px;
+    overflow-y: auto;  /* Allow scrolling when the content overflows */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;  /* Align content to the top */
+    align-items: center;
+    font-size: 2.5rem;
+    padding-top: 60px;  /* Some padding at the top to avoid overlap with headers */
+}
+
+.enlarged .card {
+    width: 80%;
+    max-width: 800px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); /* Adding a subtle shadow for a better look */
+    border: none;  /* Remove default border */
+}
+
+.enlarged .card-header, .enlarged .card-body {
+    padding: 20px 30px;  /* More padding for better presentation */
+}
+</style>
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Russia Ukraine War Score Updator</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <div class="alert alert-warning">
+                        {% for message in messages %}
+                            {{ message }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+        <!-- Display title and Logout button -->
+        <div class="d-flex justify-content-between align-items-center mt-3">
+            <h1>Russia Ukraine War Score Updator</h1>
+            <a href="{{ url_for('logout') }}" class="btn btn-danger">Logout</a>
+        </div>
+
+        <!-- Display Current Article -->
+        <div class="card mt-5" id="articleCard" onclick="toggleEnlarge()" style="margin-top: 5rem;">
+            <div class="card-header">
+                <h2>{{ current_article.title }} (ID: {{ current_article.id }})</h2>
+            </div>
+            <div class="card-body">
+                <p class="card-text">{{ current_article.content }}</p>
+            </div>
+        </div>
+
+
+        <!-- Input fields for scores -->
+        <form action="{{ url_for('update_score') }}" method="POST">
+            <div class="form-group row mt-5">
+                <div class="col">
+                    <label for="russia_score">Russia Score</label>
+                    <input type="text" class="form-control" id="russia_score" name="russia_score" placeholder="Russia Score" {{ 'disabled' if article_has_score }}>
+                </div>
+                <div class="col">
+                    <label for="ukraine_score">Ukraine Score</label>
+                    <input type="text" class="form-control" id="ukraine_score" name="ukraine_score" placeholder="Ukraine Score" {{ 'disabled' if article_has_score }}>
+                    <input type="hidden" id="article_id" name="article_id" value="{{ article_id }}">
+                </div>
+            </div>
+
+            <!-- Buttons for navigation and updating -->
+            <div class="d-flex justify-content-between mt-3">
+                <button type="submit" class="btn btn-primary">Update Score</button>
+            </div>
+        </form>
+        <!-- Buttons for navigation -->
+        <div class="d-flex justify-content-between mt-3">
+            <form action="{{ url_for('previous_article') }}" method="POST" class="mr-2">
+                <button type="submit" class="btn btn-primary">Previous</button>
+            </form>
+            <form action="{{ url_for('next_article') }}" method="POST" class="ml-2">
+                <button type="submit" class="btn btn-primary">Next</button>
+            </form>
+        </div>
+
+        <table class="table mt-5">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Title</th>
+                    <th>Russia Score</th>
+                    <th>Ukraine Score</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for article in articles %}
+                <tr>
+                    <td>{{ article.id }}</td>
+                    <td>{{ article.title }}</td>
+                    <td>{{ article.Russia_score }}</td>
+                    <td>{{ article.Ukraine_score }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>
+
+<script>
+function toggleEnlarge() {
+    const card = document.getElementById("articleCard");
+    if (card.classList.contains("enlarged")) {
+        card.classList.remove("enlarged");
+    } else {
+        card.classList.add("enlarged");
+    }
+}
+</script>
